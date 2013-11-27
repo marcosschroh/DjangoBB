@@ -139,7 +139,7 @@ def search(request):
     posts = Post.objects.all().order_by('-created')
     user = request.user
     if not user.is_superuser:
-        user_groups = user.groups.all() or [] # need 'or []' for anonymous user otherwise: 'EmptyManager' object is not iterable 
+        user_groups = user.groups.all() or [] # need 'or []' for anonymous user otherwise: 'EmptyManager' object is not iterable
         viewable_category = viewable_category.filter(Q(groups__in=user_groups) | Q(groups__isnull=True))
 
         topics = Topic.objects.filter(forum__category__in=viewable_category)
@@ -358,7 +358,7 @@ def show_topic(request, topic_id, full=True):
     * Display a topic
     * save a reply
     * save a poll vote
-    
+
     TODO: Add reply in lofi mode
     """
     post_request = request.method == "POST"
@@ -816,7 +816,12 @@ def add_subscription(request, topic_id):
 @login_required
 def show_attachment(request, hash):
     attachment = get_object_or_404(Attachment, hash=hash)
-    file_data = file(attachment.get_absolute_path(), 'rb').read()
+    if forum_settings.ATTACHMENT_EC2_SUPPORT:
+        from djangobb_forum.attachment_storage import AttachmentStorage
+        attachment_storage = AttachmentStorage()
+        file_data = attachment_storage.get_attachment(attachment.path)
+    else:
+        file_data = file(attachment.get_absolute_path(), 'rb').read()
     response = HttpResponse(file_data, mimetype=attachment.content_type)
     response['Content-Disposition'] = 'attachment; filename="%s"' % smart_str(attachment.name)
     return response

@@ -127,11 +127,17 @@ class AddPostForm(forms.ModelForm):
         if memfile:
             obj = Attachment(size=memfile.size, content_type=memfile.content_type,
                              name=memfile.name, post=post)
-            dir = os.path.join(settings.MEDIA_ROOT, forum_settings.ATTACHMENT_UPLOAD_TO)
-            fname = '%d.0' % post.id
-            path = os.path.join(dir, fname)
-            file(path, 'wb').write(memfile.read())
-            obj.path = fname
+            if forum_settings.ATTACHMENT_EC2_SUPPORT:
+                from djangobb_forum.attachment_storage import AttachmentStorage
+                attachment_storage = AttachmentStorage()
+                attachment_storage.add_attachment(post.id, memfile)
+                obj.path = post.id
+            else:
+                dir = os.path.join(settings.MEDIA_ROOT, forum_settings.ATTACHMENT_UPLOAD_TO)
+                fname = '%d.0' % post.id
+                path = os.path.join(dir, fname)
+                file(path, 'wb').write(memfile.read())
+                obj.path = fname
             obj.save()
 
 

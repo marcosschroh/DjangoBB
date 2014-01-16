@@ -350,7 +350,7 @@ class Report(models.Model):
     reported_by = models.ForeignKey(User, related_name='reported_by', verbose_name=_('Reported by'))
     post = models.ForeignKey(Post, verbose_name=_('Post'))
     zapped = models.BooleanField(_('Zapped'), blank=True, default=False)
-    zapped_by = models.ForeignKey(User, related_name='zapped_by', blank=True, null=True, verbose_name=_('Zapped by'))
+    #zapped_by = models.ForeignKey(User, related_name='zapped_by', blank=True, null=True, verbose_name=_('Zapped by'))
     created = models.DateTimeField(_('Created'), blank=True)
     reason = models.TextField(_('Reason'), blank=True, default='', max_length='1000')
 

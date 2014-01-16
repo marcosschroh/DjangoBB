@@ -52,7 +52,8 @@ class ReputationAdmin(BaseModelAdmin):
     raw_id_fields = ['from_user', 'to_user', 'post']
 
 class ReportAdmin(BaseModelAdmin):
-    list_display = ['reported_by', 'post', 'zapped', 'zapped_by', 'created', 'reason']
+    #list_display = ['reported_by', 'post', 'zapped', 'zapped_by', 'created', 'reason']
+    list_display = ['reported_by', 'post', 'zapped', 'created', 'reason']
     raw_id_fields = ['reported_by', 'post']
 
 class BanAdmin(BaseModelAdmin):
